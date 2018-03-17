@@ -37,14 +37,23 @@ function draw() {
   drawBall();
   drawPaddle();
 
+  if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) { dx = -dx }
+
+  if (y + dy < ballRadius) { dy = -dy }
+  else if (y + dy > canvas.height - ballRadius) {
+    if (x > paddleX && x < paddleX + paddleWidth) { dy = -dy }
+    else {
+        alert("GAME OVER");
+        clearInterval(game);
+        document.location.reload();
+    }
+  }
+
   if (rightPressed && paddleX < canvas.width - paddleWidth) { paddleX += 7 }
   else if (leftPressed && paddleX > 0) { paddleX -= 7 }
-
-  if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) { dx = -dx }
-  if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) { dy = -dy }
 
   x += dx;
   y += dy;
 }
 
-setInterval(draw, 20);
+var game = setInterval(draw, 20);
