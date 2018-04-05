@@ -1,10 +1,11 @@
 var canvas = document.getElementById("myCanvas"), ctx = canvas.getContext("2d");
-var x = canvas.width / 2, y = canvas.height - 30, dx = 2, dy = -2, ballRadius = 8;
-var paddleHeight = 7, paddleWidth = 60, paddleX = (canvas.width - paddleWidth) / 2;
-var rightPressed = false, leftPressed = false;
-var brickRowCount = 3, brickColumnCount = 5, brickPadding = 5, bricks = [];
-var brickWidth = 50, brickHeight = 10, brickOffsetTop = 20, brickOffsetLeft = 15;
-var score = 0, lives = 3;
+canvas.width = window.innerWidth, canvas.height = window.innerHeight;
+
+var x = canvas.width / 2, y = canvas.height - 50, dx = 2, dy = -2, ballRadius = canvas.width / 50;
+var paddleHeight = canvas.height / 25, paddleWidth = canvas.width / 6, paddleX = (canvas.width - paddleWidth) / 2;
+var rightPressed = false, leftPressed = false, score = 0, lives = 3;
+var brickRowCount = 3, brickColumnCount = 5, brickPadding = canvas.width / 100, bricks = [];
+var brickWidth = canvas.width / 6, brickHeight = canvas.height / 20, brickOffsetTop = canvas.width / 15, brickOffsetLeft = canvas.width / 15;
 
 for(var column = 0; column < brickColumnCount; column++) {
   bricks[column] = [];
@@ -13,10 +14,11 @@ for(var column = 0; column < brickColumnCount; column++) {
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-document.addEventListener("mousemove", mouseMoveHandler, false);
+document.addEventListener("mousemove", movingHandler, false);
+document.addEventListener("touchmove", movingHandler, false);
 
-function mouseMoveHandler(e) {
-  var relativeX = e.clientX - canvas.offsetLeft;
+function movingHandler(e) {
+  var relativeX = e.clientX || e.touches[0].clientX;
   if (relativeX > 0 && relativeX < canvas.width) { paddleX = relativeX - paddleWidth / 2 }
 }
 
@@ -49,15 +51,15 @@ function collisionDetection() {
 }
 
 function drawScore() {
-  ctx.font = "10px Comic Sans MS";
+  ctx.font = canvas.width / 50 + "px Comic Sans MS";
   ctx.fillStyle = "#0095DD";
-  ctx.fillText("Score: " + score, 15, 10);
+  ctx.fillText("Score: " + score, canvas.width / 50, canvas.width / 50);
 }
 
 function drawLives() {
-  ctx.font = "10px Comic Sans MS";
+  ctx.font = canvas.width / 50 + "px Comic Sans MS";
   ctx.fillStyle = "#0095DD";
-  ctx.fillText("Lives: " + lives, canvas.width - 55, 10);
+  ctx.fillText("Lives: " + lives, canvas.width - canvas.width / 10, canvas.width / 50);
 }
 
 function drawPaddle() {
@@ -103,7 +105,6 @@ function draw() {
 	collisionDetection();
 
   if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) { dx = -dx }
-
   if (y + dy < ballRadius) { dy = -dy }
   else if (y + dy > canvas.height - ballRadius) {
     if (x > paddleX && x < paddleX + paddleWidth) { dy = -dy }
@@ -112,13 +113,10 @@ function draw() {
       if(!lives) {
         alert("GAME OVER !!! Score: " + score);
         document.location.reload();
-      } else {
-        x = canvas.width / 2;
-        y = canvas.height - 30;
-        dx = 2;
-        dy = -2;
-        paddleX = (canvas.width - paddleWidth) / 2;
       }
+      x = canvas.width / 2, y = canvas.height - 50;
+      dx = 2, dy = -2;
+      paddleX = (canvas.width - paddleWidth) / 2;
     }
   }
 
